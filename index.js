@@ -38,7 +38,7 @@ if(persona.colorFavorito === "verde"){
 
 //tarea, le vamos a dar por consola nombre de la tarea y la descripcion, lo mismo que esto pero con tareas
 
-//PARA TAREAS-------------------------------------------------------------------------------------------
+//PARA TAREAS--------------------------------------------------------------------------
 
 // Leer el archivo JSON
 
