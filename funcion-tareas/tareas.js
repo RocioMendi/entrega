@@ -3,9 +3,6 @@ import fs from "fs";
 
 
 
-
-
-
 export const tareasMain =async () => {
 
 
@@ -19,78 +16,102 @@ export const tareasMain =async () => {
                 name: "accion",
                 message: "¿Qué acción te gustaría realizar?",
                 type: "list",
-                choices: ["Agregar", "Eliminar", "Actualizar", "Leer"],
+                choices: ["Agregar nuevo neumatico", "Eliminar un neumatico actual", "Actualizar neumatico", "Leer stock actual"],
             },
           
         ]);
-    //Agregar alumno
-        if (decisionDeTareas.accion === "Agregar") {
-            const {nombre, dni} = await inquirer.prompt([
+    //AGREGAR NEUMATICO
+        if (decisionDeTareas.accion === "Agregar nuevo neumatico") {
+            const {marca, medida} = await inquirer.prompt([
                 {
-                name: "nombre",
-                message: "¿Cómo te llamás?",
+                name: "marca",
+                message: "¿Cuál es la marca del nuevo neumatico?",
                 },
                 {
-                    name: "dni",
-                message: "¿Cual es tu número de dni?",  
+                    name: "medida",
+                message: "¿Cual es la medida del nuevo neumatico?",  
                 },
             ]);
 
-let persona = {
-    nombre: nombre,
-    dni: dni,
+let neumatico = {
+    marca: marca,
+    medida: medida,
 };
 
 
-            tareas.push(persona);
+            tareas.push(neumatico);
             fs.writeFileSync("./tareas.json", JSON.stringify(tareas));
-            console.log("Persona agregada:" , persona);
+            console.log("Neumatico agregado:" , neumatico);
     
 
 
-    //ELIMINAR ALUMNO:
-        } else if (decisionDeTareas.accion === "Eliminar") {
-            const {dni} = await inquirer.prompt([
+    //ELIMINAR NEUMATICO:
+        } else if (decisionDeTareas.accion === "Eliminar un neumatico actual") {
+            const { marca, medida } = await inquirer.prompt([
                 {
-                    name: "dni",
-                message: "¿Cual es el número de dni a eliminar?",  
+                    name: "marca",
+                    message: "¿Cuál es la marca del neumático a eliminar?",
+                },
+                {
+                    name: "medida",
+                    message: "¿Cuál es la medida del neumático a eliminar?",
                 },
             ]);
-
-          const indice = tareas.findIndex((persona)=> persona.dni ==dni);
-
-          tareas.splice(indice, 1);
-
-            fs.writeFileSync("./tareas.json", JSON.stringify(tareas));
-            console.log("Persona Eliminada");
-
-//ACTUALIZAR ALUMNO
-        } else if (decisionDeTareas.accion === "Actualizar") {
-            const {dni} = await inquirer.prompt([
-                {
-                    name: "dni",
-                message: "¿Cuál es el dni de la persona que te gustaria actualizar?",  
-                },
-            ]);
-            let persona = tareas.find((item) => item.dni === dni);
-            if (!persona){
-                console.log("alumno no encontrado");
-                return //Corta la ejecucion
+        
+            const indice = tareas.findIndex((neumatico) => neumatico.marca === marca && neumatico.medida === medida);
+        
+            if (indice === -1) {
+                console.log("Neumático no encontrado");
+                return; // Corta la ejecución si no se encuentra el neumático
             }
-        const {nombre} = await inquirer.prompt([
-            {
-                name: "nombre",
-            message: `¿Cuál es el nuevo nombre? (actual: ${persona.nombre})`,  
-            },
+        
+            tareas.splice(indice, 1);
+        
+            fs.writeFileSync("./tareas.json", JSON.stringify(tareas));
+            console.log("Neumático eliminado correctamente");
 
-        ])
-persona.nombre =nombre;
-fs.writeFileSync("./tareas.json", JSON.stringify(tareas));
-            console.log("Persona Actualizada");
+//ACTUALIZAR NEUMATICO
+        } else if (decisionDeTareas.accion === "Actualizar neumatico") {
+            const { marca, medida } = await inquirer.prompt([
+                {
+                    name: "marca",
+                    message: "¿Cuál es la marca del neumático a actualizar?",
+                },
+                {
+                    name: "medida",
+                    message: "¿Cuál es la medida del neumático a actualizar?",
+                },
+            ]);
+        
+            let neumatico = tareas.find((item) => item.marca === marca && item.medida === medida);
+            
+            if (!neumatico) {
+                console.log("Neumático no encontrado");
+                return; // Corta la ejecución
+            }
+        
+            const { nuevaMarca, nuevaMedida } = await inquirer.prompt([
+                {
+                    name: "nuevaMarca",
+                    message: `¿Cuál es la nueva marca? (actual: ${neumatico.marca})`,
+                },
+                {
+                    name: "nuevaMedida",
+                    message: `¿Cuál es la nueva medida? (actual: ${neumatico.medida})`,
+                },
+                
+            ]);
+        
+        
+            neumatico.marca = nuevaMarca || neumatico.marca;
+            neumatico.medida = nuevaMedida || neumatico.medida;
+        
+            fs.writeFileSync("./tareas.json", JSON.stringify(tareas));
+            console.log("Neumático actualizado");
 
-            //VER LOS ALUMNOS
+            //VER STOCK DE NEUMATICOS ACTUAL
         } 
-        else if (decisionDeTareas.accion === "Leer"){
+        else if (decisionDeTareas.accion === "Leer stock actual"){
             tareas.forEach((element)=>{
         console.log(element);
             });
